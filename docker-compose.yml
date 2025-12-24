@@ -1,0 +1,17 @@
+services:
+  cardealership.api:
+    image: ${DOCKER_REGISTRY-}cardealershipapi
+    build:
+      context: .
+      dockerfile: CarDealership.Api/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      # Override connection string to use a path in the volume
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/app.db
+    volumes:
+      # Persist the SQLite database
+      - ./data:/app/data
