@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "x6VlVqOJDtU=",
+  "dgSpecHash": "mxaVaOx4ujE=",
   "success": true,
   "projectFilePath": "/home/azoz-laptop/Desktop/Git-Projects/jyadcar/CarDealership.Api/CarDealership.Api.csproj",
   "expectedPackageFiles": [
     "/home/azoz-laptop/.nuget/packages/microsoft.aspnetcore.openapi/9.0.11/microsoft.aspnetcore.openapi.9.0.11.nupkg.sha512",
-    "/home/azoz-laptop/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
+    "/home/azoz-laptop/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512",
+    "/home/azoz-laptop/.nuget/packages/scalar.aspnetcore/2.11.10/scalar.aspnetcore.2.11.10.nupkg.sha512"
   ],
   "logs": []
 }
