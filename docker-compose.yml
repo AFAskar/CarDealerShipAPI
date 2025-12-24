@@ -1,6 +1,6 @@
 services:
   cardealership.api:
-    image: ${DOCKER_REGISTRY-}cardealershipapi
+    image: abo3skr/cardealership-api
     build:
       context: .
       dockerfile: CarDealership.Api/Dockerfile
