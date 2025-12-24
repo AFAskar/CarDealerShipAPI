@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+namespace CarDealership.Api.Models;
+
 public class Vehicle
 {
     public Guid Id { get; set; }

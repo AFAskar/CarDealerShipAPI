@@ -1,16 +1,10 @@
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-public class User
+namespace CarDealership.Api.Models;
+
+public class User : IdentityUser<Guid>
 {
-    public Guid Id { get; set; }
-
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; } = default!;
-
-    [Required]
-    public string PasswordHash { get; set; } = default!;
-
     [Required]
     public string Role { get; set; } = "Customer"; // Admin | Customer
 
