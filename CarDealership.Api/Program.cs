@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using System.Text;
 
@@ -47,7 +48,38 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Components ??= new();
+        document.Components.SecuritySchemes.Add("Bearer", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header using the Bearer scheme."
+        });
+
+        document.SecurityRequirements ??= new List<OpenApiSecurityRequirement>();
+        document.SecurityRequirements.Add(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+        return Task.CompletedTask;
+    });
+});
 
 var app = builder.Build();
 
