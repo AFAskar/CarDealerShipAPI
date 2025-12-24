@@ -51,6 +51,9 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// Seed Data
+await CarDealership.Api.Data.DbSeeder.SeedAsync(app.Services);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
