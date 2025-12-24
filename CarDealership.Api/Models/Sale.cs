@@ -16,7 +16,16 @@ public class Sale
 
     public decimal PriceAtPurchase { get; set; }
 
+    public SaleStatus Status { get; set; } = SaleStatus.Pending;
+
     // Navigation
     public User User { get; set; } = default!;
     public Vehicle Vehicle { get; set; } = default!;
+}
+
+public enum SaleStatus
+{
+    Pending,
+    Completed,
+    Rejected
 }
