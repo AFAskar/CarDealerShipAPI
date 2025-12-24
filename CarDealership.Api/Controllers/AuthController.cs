@@ -54,11 +54,20 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, [FromHeader(Name = "X-OTP")] string? otpCode)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
             return Unauthorized("Invalid credentials");
+
+        if (!string.IsNullOrEmpty(otpCode))
+        {
+            var isValid = await _otpService.ValidateOtpAsync(user, otpCode);
+            if (!isValid) return BadRequest("Invalid or expired OTP");
+
+            var token = GenerateJwtToken(user);
+            return Ok(new AuthResponse(token, "Login successful", false));
+        }
 
         // Generate OTP for login
         var code = await _otpService.GenerateOtpAsync(user);
@@ -81,7 +90,8 @@ public class AuthController : ControllerBase
             return BadRequest("Invalid or expired OTP");
 
         // If action is Login or Register, we issue a token
-        if (request.Action == "Login" || request.Action == "Register")
+        if (request.Action.Equals("Login", StringComparison.OrdinalIgnoreCase) ||
+            request.Action.Equals("Register", StringComparison.OrdinalIgnoreCase))
         {
             var token = GenerateJwtToken(user);
             return Ok(new AuthResponse(token, "Authentication successful", false));
