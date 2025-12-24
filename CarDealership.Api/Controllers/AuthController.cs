@@ -17,12 +17,14 @@ public class AuthController : ControllerBase
     private readonly UserManager<User> _userManager;
     private readonly IOtpService _otpService;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(UserManager<User> userManager, IOtpService otpService, IConfiguration configuration)
+    public AuthController(UserManager<User> userManager, IOtpService otpService, IConfiguration configuration, ILogger<AuthController> logger)
     {
         _userManager = userManager;
         _otpService = otpService;
         _configuration = configuration;
+        _logger = logger;
     }
 
     [HttpPost("register")]
@@ -48,7 +50,7 @@ public class AuthController : ControllerBase
         var code = await _otpService.GenerateOtpAsync(user);
 
         // Simulate sending OTP
-        Console.WriteLine($"[OTP] Registration OTP for {user.Email}: {code}");
+        _logger.LogInformation("[OTP] Registration OTP for {Email}: {Code}", user.Email, code);
 
         return Ok(new AuthResponse(null!, "User created. Please verify OTP to complete registration.", true));
     }
@@ -73,7 +75,7 @@ public class AuthController : ControllerBase
         var code = await _otpService.GenerateOtpAsync(user);
 
         // Simulate sending OTP
-        Console.WriteLine($"[OTP] Login OTP for {user.Email}: {code}");
+        _logger.LogInformation("[OTP] Login OTP for {Email}: {Code}", user.Email, code);
 
         return Ok(new AuthResponse(null!, "OTP sent. Please verify to login.", true));
     }

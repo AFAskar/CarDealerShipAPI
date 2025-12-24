@@ -16,12 +16,14 @@ public class VehicleController : ControllerBase
     private readonly AppDbContext _context;
     private readonly UserManager<User> _userManager;
     private readonly IOtpService _otpService;
+    private readonly ILogger<VehicleController> _logger;
 
-    public VehicleController(AppDbContext context, UserManager<User> userManager, IOtpService otpService)
+    public VehicleController(AppDbContext context, UserManager<User> userManager, IOtpService otpService, ILogger<VehicleController> logger)
     {
         _context = context;
         _userManager = userManager;
         _otpService = otpService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -108,7 +110,7 @@ public class VehicleController : ControllerBase
         {
             // Generate and send OTP
             var code = await _otpService.GenerateOtpAsync(user);
-            Console.WriteLine($"[OTP] Update Vehicle OTP for {user.Email}: {code}");
+            _logger.LogInformation("[OTP] Update Vehicle OTP for {Email}: {Code}", user.Email, code);
 
             return StatusCode(428, new { Message = "OTP required. Code sent to console.", RequiresOtp = true });
         }

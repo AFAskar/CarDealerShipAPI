@@ -11,7 +11,8 @@ public record SaleDto(
     Guid VehicleId,
     string VehicleSummary, // e.g. "Toyota Camry 2022"
     decimal PriceAtPurchase,
-    DateTime PurchasedAt
+    DateTime PurchasedAt,
+    string Status
 );
 
 public record ProcessSaleRequest(

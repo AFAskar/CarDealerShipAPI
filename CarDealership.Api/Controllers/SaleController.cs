@@ -16,12 +16,14 @@ public class SaleController : ControllerBase
     private readonly AppDbContext _context;
     private readonly UserManager<User> _userManager;
     private readonly IOtpService _otpService;
+    private readonly ILogger<SaleController> _logger;
 
-    public SaleController(AppDbContext context, UserManager<User> userManager, IOtpService otpService)
+    public SaleController(AppDbContext context, UserManager<User> userManager, IOtpService otpService, ILogger<SaleController> logger)
     {
         _context = context;
         _userManager = userManager;
         _otpService = otpService;
+        _logger = logger;
     }
 
     [HttpPost("request")]
@@ -40,7 +42,7 @@ public class SaleController : ControllerBase
         if (string.IsNullOrEmpty(otpCode))
         {
             var code = await _otpService.GenerateOtpAsync(user);
-            Console.WriteLine($"[OTP] Purchase Request OTP for {user.Email}: {code}");
+            _logger.LogInformation("[OTP] Purchase Request OTP for {Email}: {Code}", user.Email, code);
             return StatusCode(428, new { Message = "OTP required. Code sent to console.", RequiresOtp = true });
         }
 
@@ -115,8 +117,9 @@ public class SaleController : ControllerBase
                 s.VehicleId,
                 $"{s.Vehicle.Year} {s.Vehicle.Make} {s.Vehicle.Model}",
                 s.PriceAtPurchase,
-                s.PurchasedAt
-            )) // Note: You might want to add Status to SaleDto if needed
+                s.PurchasedAt,
+                s.Status.ToString()
+            ))
             .ToListAsync();
 
         return Ok(sales);
