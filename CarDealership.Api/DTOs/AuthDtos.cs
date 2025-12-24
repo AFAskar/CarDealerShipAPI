@@ -24,3 +24,10 @@ public record AuthResponse(
     string Message,
     bool RequiresOtp = false
 );
+
+public record UserDto(
+    Guid Id,
+    string Email,
+    string Role,
+    DateTime CreatedAt
+);
