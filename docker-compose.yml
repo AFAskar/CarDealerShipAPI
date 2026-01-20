@@ -14,4 +14,7 @@ services:
       - ConnectionStrings__DefaultConnection=Data Source=/app/data/app.db
     volumes:
       # Persist the SQLite database
-      - ./data:/app/data
+      - dbdata:/app/data
+
+volumes:
+  dbdata:

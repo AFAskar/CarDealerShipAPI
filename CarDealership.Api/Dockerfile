@@ -26,5 +26,9 @@ RUN dotnet publish "./CarDealership.Api.csproj" -c $BUILD_CONFIGURATION -o /app/
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
+USER root
+RUN mkdir -p /app/data && chown -R app:app /app/data
+USER app
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "CarDealership.Api.dll"]
