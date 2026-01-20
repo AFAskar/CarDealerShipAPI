@@ -5,10 +5,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// When running behind a proxy (Cloud Run, etc.) respect forwarded headers
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -89,7 +98,10 @@ await CarDealership.Api.Data.DbSeeder.SeedAsync(app.Services);
 // Configure the HTTP request pipeline.
 app.MapOpenApi();
 app.MapScalarApiReference("/docs");
+app.UseHttpsRedirection();
 
+// Apply forwarded headers so scheme/host are correct behind proxies (Cloud Run)
+app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 
