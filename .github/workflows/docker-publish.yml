@@ -3,7 +3,8 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
-
+env:
+  DOCKERHUB_REPO: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/cardealership-api
 jobs:
   build-and-push:
     name: Build and Push Docker Image
