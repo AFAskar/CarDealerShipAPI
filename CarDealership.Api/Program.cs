@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
 using System.Text;
+using Microsoft.AspNetCore.Routing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,6 +95,18 @@ var app = builder.Build();
 
 // Seed Data
 await CarDealership.Api.Data.DbSeeder.SeedAsync(app.Services);
+
+// Log registered endpoints to help debug routing on platforms like Cloud Run
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+try
+{
+    var endpoints = app.Services.GetRequiredService<EndpointDataSource>().Endpoints;
+    logger.LogInformation("Registered endpoints:\n{endpoints}", string.Join('\n', endpoints.Select(e => e.DisplayName ?? e.ToString())));
+}
+catch (Exception ex)
+{
+    logger.LogWarning(ex, "Failed to list endpoints");
+}
 
 // Configure the HTTP request pipeline.
 app.MapOpenApi();
