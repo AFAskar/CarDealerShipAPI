@@ -87,11 +87,9 @@ var app = builder.Build();
 await CarDealership.Api.Data.DbSeeder.SeedAsync(app.Services);
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference("/docs");
-}
+app.MapOpenApi();
+app.MapScalarApiReference("/docs");
+
 
 app.UseHttpsRedirection();
 
