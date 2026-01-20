@@ -7,11 +7,12 @@ on:
 jobs:
 
   build:
-
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -22,10 +23,25 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push
-      uses: docker/build-push-action@v5
+    - name: Derive short SHA
+      id: vars
+      shell: bash
+      run: |
+        echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+    - name: Build and push image (cached)
+      uses: docker/build-push-action@v6
       with:
         context: .
-        file: ./CarDealership.Api/Dockerfile
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/cardealership-api:latest
+        provenance: false
+        tags: |
+          ${{ env.DOCKERHUB_REPO }}:${{ steps.vars.outputs.SHORT_SHA }}
+          ${{ env.DOCKERHUB_REPO }}:main
+          ${{ env.DOCKERHUB_REPO }}:latest
+        cache-from: |
+          type=gha
+          type=registry,ref=${{ env.DOCKERHUB_REPO }}:buildcache
+        cache-to: |
+          type=gha,mode=max
+          type=registry,ref=${{ env.DOCKERHUB_REPO }}:buildcache,mode=max,compression=zstd
